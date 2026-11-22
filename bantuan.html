@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A0B" />
+<title>Pusat Bantuan — VELTRIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0A0A0B;--surface:#141416;--surface-2:#1A1A1D;
+  --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+  --text:#F2F2F3;--text-2:#A0A0A8;--text-3:#6B6B74;
+  --gold:#E8B923;--danger:#F87171;--ok:#5EE3B0;
+  --sh:0 6px 20px rgba(232,185,35,.22);
+  --rm:10px;--rd:14px;--rl:20px;--rf:999px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+.app{max-width:430px;margin:0 auto;min-height:100dvh;padding-bottom:40px}
+
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:rgba(10,10,11,.88);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.back-btn{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;
+  border-radius:50%;background:var(--surface-2);border:1px solid var(--border)}
+.back-btn svg{width:17px;height:17px}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.01em}
+
+.wrap{padding:16px}
+.label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:8px;margin-top:22px}
+.label:first-child{margin-top:0}
+
+.search-box{position:relative}
+.search-box svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:var(--text-3);pointer-events:none}
+.search-input{width:100%;height:46px;padding:0 14px 0 40px;border-radius:var(--rd);
+  background:var(--surface-2);border:1.5px solid var(--border);color:var(--text);
+  font-size:13.5px;transition:border-color .15s}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--text-3)}
+
+.cat-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;margin-top:12px}
+.cat-row::-webkit-scrollbar{display:none}
+.cat-chip{flex:0 0 auto;font-size:12px;font-weight:600;padding:8px 14px;border-radius:var(--rf);
+  background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);
+  white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.cat-chip.sel{background:var(--gold);color:#0A0A0B;border-color:var(--gold)}
+
+.faq-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  overflow:hidden}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{display:flex;align-items:center;gap:10px;padding:14px 16px;width:100%;text-align:left;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s}
+.faq-q:active{background:var(--surface-2)}
+.faq-q-text{flex:1;font-size:13px;font-weight:600;line-height:1.5}
+.faq-chev{flex:0 0 auto;color:var(--text-3);transition:transform .2s}
+.faq-item.open .faq-chev{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.faq-a-inner{padding:0 16px 16px 16px;font-size:12.5px;color:var(--text-2);line-height:1.75}
+.faq-a-inner p+p{margin-top:8px}
+
+.empty-faq{padding:50px 20px;text-align:center;color:var(--text-3);font-size:13px}
+
+.contact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  padding:16px}
+.contact-row{display:flex;align-items:center;gap:12px;padding:10px 0}
+.contact-row+.contact-row{border-top:1px solid var(--border)}
+.contact-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;
+  background:rgba(232,185,35,.1);color:var(--gold);display:grid;place-items:center}
+.contact-icon svg{width:17px;height:17px}
+.contact-text{flex:1;min-width:0}
+.contact-title{font-size:13px;font-weight:600}
+.contact-sub{font-size:11.5px;color:var(--text-3);margin-top:1px}
+.contact-chev{color:var(--text-3)}
+.contact-chev svg{width:15px;height:15px}
+
+.hint-box{display:flex;gap:10px;padding:13px 14px;border-radius:var(--rd);
+  background:rgba(232,185,35,.06);border:1px solid rgba(232,185,35,.2);margin-top:14px}
+.hint-box svg{width:16px;height:16px;flex:0 0 auto;color:var(--gold);margin-top:1px}
+.hint-text{font-size:12px;color:var(--text-2);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="profil.html" class="back-btn" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="topbar-title" data-i18n="bantuan.title">Pusat Bantuan</div>
+  </header>
+
+  <div class="wrap">
+
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" class="search-input" id="searchInput"
+             placeholder="Cari pertanyaan…" data-i18n-ph="bantuan.searchPh" autocomplete="off" />
+    </div>
+
+    <div class="cat-row" id="catRow">
+      <button type="button" class="cat-chip sel" data-cat="semua"     data-i18n="cat.semua">Semua</button>
+      <button type="button" class="cat-chip"     data-cat="akun"      data-i18n="cat.akun">Akun</button>
+      <button type="button" class="cat-chip"     data-cat="saldo"     data-i18n="cat.saldo">Saldo</button>
+      <button type="button" class="cat-chip"     data-cat="transaksi" data-i18n="cat.transaksi">Transaksi</button>
+      <button type="button" class="cat-chip"     data-cat="keamanan"  data-i18n="cat.keamanan">Keamanan</button>
+    </div>
+
+    <div class="label" data-i18n="bantuan.labelFaq">Pertanyaan Umum</div>
+    <div class="faq-list" id="faqList"></div>
+    <div class="empty-faq" id="emptyFaq" style="display:none"
+         data-i18n="bantuan.empty">Tidak ada pertanyaan yang cocok dengan pencarianmu.</div>
+
+    <div class="label" data-i18n="bantuan.labelContact">Hubungi Kami</div>
+    <div class="contact-card">
+      <a class="contact-row" href="mailto:support@veltrixtech.web.id" style="text-decoration:none;color:inherit">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        </div>
+        <div class="contact-text">
+          <div class="contact-title" data-i18n="bantuan.emailTitle">Email Dukungan</div>
+          <div class="contact-sub">support@veltrixtech.web.id</div>
+        </div>
+        <div class="contact-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </a>
+      <div class="contact-row">
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <div class="contact-text">
+          <div class="contact-title" data-i18n="bantuan.hoursTitle">Jam Operasional</div>
+          <div class="contact-sub" data-i18n="bantuan.hoursValue">Setiap hari, 09.00–21.00 WIB</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg>
+      <div class="hint-text" data-i18n-html="bantuan.hint">Jika pertanyaanmu tidak ditemukan di sini, silakan hubungi tim dukungan melalui email di atas dan sertakan ID Akun kamu (dapat disalin di halaman <a href="profil-edit.html">Profil Saya</a>) agar proses bantuan lebih cepat.</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="lang.js"></script>
+<script>
+(function(){
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+/* ---------- helper bahasa ---------- */
+const curLang = () => (window.getLang ? getLang() : (localStorage.getItem("veltrix_lang") || "id"));
+const tr = obj => obj[curLang()] || obj.id;
+
+/* ---------- data FAQ: 3 bahasa ---------- */
+const FAQ = [
+  { cat:"akun",
+    id:{q:"Bagaimana cara mendaftar akun VELTRIX?",a:"Buka halaman Daftar, isi email dan kata sandi, lalu verifikasi email yang dikirimkan ke inbox kamu. Setelah terverifikasi, akun langsung bisa digunakan untuk bertransaksi."},
+    zh:{q:"如何注册 VELTRIX 账号？",a:"打开注册页面，填写邮箱和密码，然后验证发送到您邮箱的邮件。验证完成后，账号即可直接用于交易。"},
+    en:{q:"How do I register a VELTRIX account?",a:"Open the Register page, enter your email and password, then verify the email sent to your inbox. Once verified, the account can be used for transactions right away."} },
+
+  { cat:"akun",
+    id:{q:"Saya lupa kata sandi, bagaimana cara mengaturnya kembali?",a:"Gunakan opsi \"Lupa Kata Sandi\" di halaman Masuk. Link reset akan dikirim ke email terdaftar. Jika kamu masih bisa login, kata sandi juga bisa diganti langsung melalui menu Profil → Pengaturan Akun → Ganti Kata Sandi."},
+    zh:{q:"忘记密码了，如何重新设置？",a:"在登录页面使用“忘记密码”功能，重置链接将发送到您注册的邮箱。如果您仍能登录，也可以直接通过“个人中心 → 账号设置 → 修改密码”进行修改。"},
+    en:{q:"I forgot my password, how do I reset it?",a:"Use the \"Forgot Password\" option on the Sign In page. A reset link will be sent to your registered email. If you can still log in, you can also change it via Profile → Account Settings → Change Password."} },
+
+  { cat:"akun",
+    id:{q:"Bagaimana cara mengganti email akun saya?",a:"Buka Profil → Pengaturan Akun → Ganti Email. Masukkan email baru dan kata sandi saat ini, lalu konfirmasi melalui link yang dikirim ke alamat email baru. Email lama tetap aktif sampai konfirmasi selesai."},
+    zh:{q:"如何更换账号邮箱？",a:"打开“个人中心 → 账号设置 → 更换邮箱”，输入新邮箱和当前密码，然后通过发送到新邮箱的链接进行确认。在确认完成前，旧邮箱仍然有效。"},
+    en:{q:"How do I change my account email?",a:"Go to Profile → Account Settings → Change Email. Enter the new email and your current password, then confirm via the link sent to the new address. The old email stays active until confirmation is complete."} },
+
+  { cat:"akun",
+    id:{q:"Apa yang dimaksud dengan status akun \"Belum Diverifikasi\"?",a:"Status ini muncul jika kamu belum mengklik link konfirmasi yang dikirim saat pendaftaran atau saat pergantian email. Periksa folder inbox maupun spam, atau minta pengiriman ulang link verifikasi."},
+    zh:{q:"账号状态“未验证”是什么意思？",a:"该状态表示您尚未点击注册或更换邮箱时发送的确认链接。请检查收件箱和垃圾邮件文件夹，或请求重新发送验证链接。"},
+    en:{q:"What does the \"Unverified\" account status mean?",a:"This status appears if you haven't clicked the confirmation link sent at registration or when changing your email. Check your inbox and spam folder, or request the verification link again."} },
+
+  { cat:"saldo",
+    id:{q:"Bagaimana cara mengisi saldo?",a:"Buka menu Isi Saldo pada navigasi bawah, pilih metode (USDT atau IDR), lalu ikuti instruksi pembayaran yang ditampilkan. Saldo akan otomatis bertambah setelah pembayaran terverifikasi."},
+    zh:{q:"如何充值余额？",a:"打开底部导航中的“充值”菜单，选择方式（USDT 或 IDR），然后按照显示的付款说明操作。付款验证通过后，余额会自动到账。"},
+    en:{q:"How do I top up my balance?",a:"Open the Top Up menu in the bottom navigation, choose a method (USDT or IDR), then follow the payment instructions shown. Your balance updates automatically once the payment is verified."} },
+
+  { cat:"saldo",
+    id:{q:"Berapa lama saldo masuk setelah pembayaran?",a:"Untuk pembayaran yang terverifikasi otomatis, saldo biasanya masuk dalam beberapa menit. Jika setelah 30 menit saldo belum bertambah, hubungi tim dukungan dengan menyertakan bukti pembayaran."},
+    zh:{q:"付款后多久到账？",a:"自动验证的付款通常在几分钟内到账。如果 30 分钟后余额仍未增加，请携带付款凭证联系支持团队。"},
+    en:{q:"How long does it take for the balance to arrive?",a:"For automatically verified payments, the balance usually arrives within a few minutes. If it hasn't increased after 30 minutes, contact support with your payment proof."} },
+
+  { cat:"saldo",
+    id:{q:"Apakah saldo USDT dan IDR bisa digabung dalam satu transaksi?",a:"Tidak. Setiap transaksi hanya dapat dibayar menggunakan satu metode saldo — USDT atau IDR — sesuai pilihan yang kamu tentukan sebelum menekan tombol Bayar."},
+    zh:{q:"USDT 和 IDR 余额可以合并用于一笔交易吗？",a:"不可以。每笔交易只能使用一种余额方式——USDT 或 IDR——以您在点击支付按钮前所选的方式为准。"},
+    en:{q:"Can USDT and IDR balances be combined in one transaction?",a:"No. Each transaction can only be paid with one balance method — USDT or IDR — whichever you selected before pressing Pay."} },
+
+  { cat:"transaksi",
+    id:{q:"Bagaimana cara melihat riwayat transaksi saya?",a:"Buka menu Transaksi pada navigasi bawah. Kamu bisa menyaring daftar berdasarkan status: Belum Dibayarkan, Diproses, Selesai, atau Dibatalkan."},
+    zh:{q:"如何查看我的交易记录？",a:"打开底部导航中的“交易”菜单，您可以按状态筛选列表：未付款、处理中、已完成或已取消。"},
+    en:{q:"How do I view my transaction history?",a:"Open the Transactions menu in the bottom navigation. You can filter the list by status: Unpaid, Processing, Completed, or Cancelled."} },
+
+  { cat:"transaksi",
+    id:{q:"Transaksi saya berstatus \"Diproses\", apa artinya?",a:"Status ini menandakan pembayaran sudah diterima dan pesanan sedang disiapkan oleh sistem atau tim kami. Status akan berubah menjadi \"Sudah Dikirim\" atau \"Selesai\" setelah produk diserahkan."},
+    zh:{q:"我的交易状态显示“处理中”，是什么意思？",a:"该状态表示付款已收到，订单正由系统或我们的团队准备中。产品交付后，状态将变为“已发送”或“已完成”。"},
+    en:{q:"My transaction says \"Processing\", what does that mean?",a:"It means your payment has been received and the order is being prepared by our system or team. The status will change to \"Delivered\" or \"Completed\" once the product is handed over."} },
+
+  { cat:"transaksi",
+    id:{q:"Apakah transaksi yang sudah dibayar bisa dibatalkan?",a:"Transaksi yang sudah berstatus Diproses atau Selesai umumnya tidak dapat dibatalkan karena produk digital bersifat langsung terkirim. Untuk kendala khusus, hubungi tim dukungan agar dapat ditinjau kasus per kasus."},
+    zh:{q:"已付款的交易可以取消吗？",a:"已处于“处理中”或“已完成”状态的交易通常无法取消，因为数字产品一经发送即生效。如遇特殊情况，请联系支持团队进行个案处理。"},
+    en:{q:"Can a paid transaction be cancelled?",a:"Transactions already in Processing or Completed status generally cannot be cancelled, since digital products are delivered immediately. For special cases, contact support so it can be reviewed individually."} },
+
+  { cat:"transaksi",
+    id:{q:"Produk yang saya beli tidak sesuai atau bermasalah, apa yang harus dilakukan?",a:"Hubungi tim dukungan melalui email dengan menyertakan ID Transaksi dan penjelasan kendala. Tim kami akan memverifikasi dan menindaklanjuti sesuai kebijakan layanan."},
+    zh:{q:"购买的产品不符合预期或出现问题，该怎么办？",a:"请通过邮箱联系支持团队，并提供交易 ID 和问题说明。我们将根据服务政策进行核实和跟进。"},
+    en:{q:"The product I bought is not as expected or has an issue — what should I do?",a:"Contact support by email with your Transaction ID and a description of the problem. Our team will verify and follow up according to our service policy."} },
+
+  { cat:"keamanan",
+    id:{q:"Apakah data saya aman di VELTRIX?",a:"Ya. Seluruh pemrosesan data mengikuti Kebijakan Privasi kami yang berpedoman pada UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi. Detail lengkap dapat dibaca di halaman Kebijakan Privasi."},
+    zh:{q:"我的数据在 VELTRIX 安全吗？",a:"安全。所有数据处理均遵循我们的隐私政策，该政策依据印尼《2022 年第 27 号个人数据保护法》。详情可在隐私政策页面查看。"},
+    en:{q:"Is my data safe on VELTRIX?",a:"Yes. All data processing follows our Privacy Policy, which is based on Indonesian Law No. 27 of 2022 on Personal Data Protection. Full details are available on the Privacy Policy page."} },
+
+  { cat:"keamanan",
+    id:{q:"Bagaimana cara menjaga keamanan akun saya?",a:"Gunakan kata sandi yang kuat dan unik, jangan membagikan kata sandi atau kode verifikasi kepada siapa pun, serta selalu logout dari perangkat yang bukan milik pribadi."},
+    zh:{q:"如何保护我的账号安全？",a:"使用强度高且独一无二的密码，不要向任何人透露密码或验证码，并在非个人设备上始终退出登录。"},
+    en:{q:"How do I keep my account secure?",a:"Use a strong, unique password, never share your password or verification codes with anyone, and always log out on devices that aren't yours."} }
+];
+
+/* ---------- render ---------- */
+let currentCat = "semua";
+
+function render(list){
+  const wrap  = $("faqList");
+  const empty = $("emptyFaq");
+  if(list.length === 0){
+    wrap.innerHTML = "";
+    wrap.style.display = "none";
+    empty.style.display = "block";
+    return;
+  }
+  wrap.style.display = "block";
+  empty.style.display = "none";
+
+  wrap.innerHTML = list.map(function(item, i){
+    const t = tr(item);
+    return ''
+      + '<div class="faq-item" data-idx="' + i + '">'
+      +   '<button type="button" class="faq-q">'
+      +     '<span class="faq-q-text">' + t.q + '</span>'
+      +     '<span class="faq-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>'
+      +   '</button>'
+      +   '<div class="faq-a"><div class="faq-a-inner">' + t.a + '</div></div>'
+      + '</div>';
+  }).join("");
+
+  wrap.querySelectorAll(".faq-q").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      const item   = btn.closest(".faq-item");
+      const body   = item.querySelector(".faq-a");
+      const isOpen = item.classList.contains("open");
+      wrap.querySelectorAll(".faq-item.open").forEach(function(o){
+        if(o !== item){
+          o.classList.remove("open");
+          o.querySelector(".faq-a").style.maxHeight = null;
+        }
+      });
+      if(isOpen){
+        item.classList.remove("open");
+        body.style.maxHeight = null;
+      } else {
+        item.classList.add("open");
+        body.style.maxHeight = body.scrollHeight + "px";
+      }
+    });
+  });
+}
+
+function applyFilter(){
+  const q = $("searchInput").value.trim().toLowerCase();
+  const filtered = FAQ.filter(function(item){
+    const t = tr(item);
+    const matchCat = currentCat === "semua" || item.cat === currentCat;
+    const matchQ   = !q
+      || t.q.toLowerCase().indexOf(q) > -1
+      || t.a.toLowerCase().indexOf(q) > -1;
+    return matchCat && matchQ;
+  });
+  render(filtered);
+}
+
+document.querySelectorAll(".cat-chip").forEach(function(c){
+  c.addEventListener("click", function(){
+    currentCat = c.getAttribute("data-cat");
+    document.querySelectorAll(".cat-chip").forEach(function(x){
+      x.classList.toggle("sel", x === c);
+    });
+    applyFilter();
+  });
+});
+
+$("searchInput").addEventListener("input", applyFilter);
+
+/* render pertama */
+applyFilter();
+
+/* render ulang setiap bahasa berubah */
+document.addEventListener("langchange", function(){
+  if(window.applyLang) applyLang(curLang());
+  applyFilter();
+});
+
+})();
+</script>
+</body>
+</html>
