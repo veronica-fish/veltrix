@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0B" />
+  <title>VELTRIX — Masuk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{
+      --bg:#0A0A0B;--surface:#141416;--surface-2:#1A1A1D;
+      --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+      --text:#F2F2F3;--text-2:#A0A0A8;--text-3:#6B6B74;
+      --gold:#E8B923;--danger:#F87171;
+      --r-sm:10px;--r-md:14px;--r-lg:20px;--r-full:999px;
+      --sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;
+      --shadow-gold:0 6px 20px rgba(232,185,35,.22);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      background:var(--bg);color:var(--text);
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      font-size:14px;line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      min-height:100dvh;display:flex;align-items:center;justify-content:center;
+      padding:var(--sp-6) var(--sp-4);
+    }
+    img,svg{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+    :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+    .card{
+      width:100%;max-width:400px;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:var(--r-lg);overflow:hidden;padding:var(--sp-6);
+      position:relative;
+    }
+
+    .lang-switch{
+      position:absolute;top:var(--sp-4);right:var(--sp-4);
+      display:flex;gap:4px;
+    }
+    .lang-btn{
+      padding:4px 8px;border-radius:var(--r-sm);
+      font-size:11px;font-weight:700;color:var(--text-3);
+      border:1px solid var(--border);transition:color .15s,border-color .15s,background .15s;
+    }
+    .lang-btn.active{color:var(--gold);border-color:rgba(232,185,35,.4);background:rgba(232,185,35,.08)}
+
+    .logo{text-align:center;margin-bottom:var(--sp-6)}
+    .logo img{height:34px;width:auto;margin:0 auto}
+    h1{font-size:20px;font-weight:700;letter-spacing:-.02em;text-align:center;margin-bottom:var(--sp-6)}
+
+    .field{display:block;margin-bottom:var(--sp-3)}
+    .field-label{display:block;font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px}
+    .field input{
+      width:100%;height:46px;padding:0 var(--sp-4);
+      background:var(--surface-2);border:1px solid var(--border);
+      border-radius:var(--r-md);color:var(--text);
+      transition:border-color .15s,background .15s;
+      font-size:14px;
+    }
+    .field input::placeholder{color:var(--text-3)}
+    .field input:focus{outline:none;border-color:var(--gold);background:#1D1D20}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+      width:100%;height:46px;padding:0 var(--sp-5);border-radius:var(--r-md);
+      font-size:14px;font-weight:600;letter-spacing:-.01em;
+      white-space:nowrap;user-select:none;cursor:pointer;
+      transition:background .15s,opacity .15s,transform .1s;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn:disabled{opacity:.45;pointer-events:none}
+    .btn-primary{background:var(--gold);color:#0A0A0B;box-shadow:var(--shadow-gold);border:none}
+    .btn-primary:hover{background:#F0C43A}
+    .btn-google{
+      background:var(--surface-2);color:var(--text);
+      border:1px solid var(--border-strong);
+      display:flex;align-items:center;justify-content:center;gap:10px;
+    }
+    .btn-google:hover{background:#222226}
+
+    .divider{
+      display:flex;align-items:center;gap:var(--sp-3);
+      margin:var(--sp-5) 0;color:var(--text-3);font-size:12px;
+    }
+    .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+
+    .alert{
+      display:flex;gap:var(--sp-2);align-items:flex-start;
+      padding:var(--sp-3) var(--sp-4);border-radius:var(--r-md);
+      font-size:13px;line-height:1.5;margin-bottom:var(--sp-3);
+    }
+    .alert-error{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);color:#FCA5A5}
+    .alert-success{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.22);color:#6EE7B7}
+    .alert:empty{display:none}
+
+    .links{margin-top:var(--sp-5);text-align:center;font-size:13px;color:var(--text-2);line-height:2}
+    .links a{color:var(--gold);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="id">ID</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+
+    <div class="logo">
+      <img src="https://raw.githubusercontent.com/veronica-fish/veltrix/main/img/logo.png" alt="VELTRIX" />
+    </div>
+    <h1 id="loginTitle"></h1>
+
+    <div id="alert" class="alert"></div>
+
+    <label class="field">
+      <span class="field-label" id="lblEmail"></span>
+      <input type="email" id="email" placeholder="nama@email.com" autocomplete="email" />
+    </label>
+    <label class="field">
+      <span class="field-label" id="lblPassword"></span>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+    </label>
+
+    <button class="btn btn-primary" id="loginBtn" style="margin-top:4px"></button>
+
+    <div class="divider" id="dividerText"></div>
+
+    <button class="btn btn-google" id="googleBtn">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-8 19.6-20 0-1.3-.1-2.7-.4-4z"/>
+        <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.5 16 19 12 24 12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.4 6.3 14.7z"/>
+        <path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5l-6.2-5.2C29.4 35.5 26.8 36 24 36c-5.2 0-9.6-2.9-11.3-7.1l-6.5 5C9.7 39.6 16.3 44 24 44z"/>
+        <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.3-2.4 4.2-4.4 5.5l6.2 5.2C40.8 35.3 44 30 44 24c0-1.3-.1-2.7-.4-4z"/>
+      </svg>
+      <span id="googleBtnText"></span>
+    </button>
+
+    <div class="links">
+      <span id="belumPunyaText"></span> <a href="register.html" id="daftarLink"></a><br>
+      <a href="index.html" id="kembaliLink"></a>
+    </div>
+  </div>
+
+  <script src="lang.js"></script>
+  <script>
+    const SUPABASE_URL = "https://rqqcdbbbcvhfjxznpowh.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_hTtIwFW3VFZj9p6qthAb3w_HbP5lVjs";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const alertEl   = document.getElementById("alert");
+    const loginBtn  = document.getElementById("loginBtn");
+    const googleBtn = document.getElementById("googleBtn");
+
+    function tr(key){ return typeof window.t === "function" ? window.t(key) : key; }
+
+    let alertState = null; // { msgKeyOrText, type }
+
+    function showAlert(msg, type="error"){
+      alertState = { msg, type };
+      alertEl.className = "alert alert-" + type;
+      alertEl.textContent = msg;
+    }
+
+    function updateTexts(){
+      document.getElementById("loginTitle").textContent     = tr("login.title");
+      document.getElementById("lblEmail").textContent       = tr("login.email");
+      document.getElementById("lblPassword").textContent    = tr("login.password");
+      document.getElementById("dividerText").textContent    = tr("login.atau");
+      document.getElementById("googleBtnText").textContent  = tr("login.btnGoogle");
+      document.getElementById("belumPunyaText").textContent = tr("login.belumPunya");
+      document.getElementById("daftarLink").textContent     = tr("login.daftar");
+      document.getElementById("kembaliLink").textContent    = tr("login.kembaliBeranda");
+
+      if (!loginBtn.disabled){
+        loginBtn.textContent = tr("login.btnMasuk");
+      } else {
+        loginBtn.textContent = tr("login.memproses");
+      }
+
+      // re-render alert text bila sedang tampil, ikut bahasa baru
+      if (alertState) showAlert(alertState.msg, alertState.type);
+    }
+
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => setLang(btn.dataset.lang));
+    });
+
+    document.addEventListener("langchange", updateTexts);
+
+    async function cekLogin(){
+      const { data } = await sb.auth.getUser();
+      if (data?.user) location.href = "index.html";
+    }
+    cekLogin();
+
+    loginBtn.addEventListener("click", async () => {
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      if (!email || !password){ showAlert(tr("login.errWajib")); return; }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = tr("login.memproses");
+
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error){
+        showAlert(error.message);
+        loginBtn.disabled = false;
+        loginBtn.textContent = tr("login.btnMasuk");
+        return;
+      }
+      showAlert(tr("login.suksesAlih"), "success");
+      setTimeout(() => location.href = "index.html", 700);
+    });
+
+    googleBtn.addEventListener("click", async () => {
+      const { error } = await sb.auth.signInWithOAuth({
+        provider:"google",
+        options:{ redirectTo:"https://veltrixtech.web.id/index.html" }
+      });
+      if (error) showAlert(error.message);
+    });
+
+    updateTexts();
+  </script>
+</body>
+</html>
