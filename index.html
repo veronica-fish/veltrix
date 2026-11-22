@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0B" />
+  <title>VELTRIX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="lang.js"></script>
+  <style>
+    :root{
+      --bg:#0A0A0B;--surface:#141416;--surface-2:#1A1A1D;
+      --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+      --text:#F2F2F3;--text-2:#A0A0A8;--text-3:#6B6B74;
+      --gold:#E8B923;--gold-soft:rgba(232,185,35,.12);
+      --success:#34D399;--danger:#F87171;--info:#60A5FA;
+      --r-sm:10px;--r-md:14px;--r-lg:20px;--r-full:999px;
+      --sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;
+      --nav-h:68px;--shadow-gold:0 6px 20px rgba(232,185,35,.22);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{
+      background:var(--bg);color:var(--text);
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;
+    }
+    img,svg{display:block;max-width:100%}
+    img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+    :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+    .app{
+      max-width:430px;margin:0 auto;min-height:100dvh;
+      padding-bottom:calc(var(--nav-h) + var(--sp-6) + env(safe-area-inset-bottom));
+    }
+
+    .topbar{
+      position:sticky;top:0;z-index:60;
+      display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+      padding:var(--sp-3) var(--sp-4);
+      background:rgba(10,10,11,.88);
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{height:30px;width:auto}
+
+    .lang-switcher{display:flex;align-items:center;gap:4px}
+    .lang-btn{
+      height:28px;padding:0 10px;border-radius:var(--r-full);
+      font-size:11px;font-weight:700;letter-spacing:.02em;
+      color:var(--text-3);border:1px solid transparent;
+      transition:color .15s,border-color .15s,background .15s;
+    }
+    .lang-btn:hover{color:var(--text)}
+    .lang-btn.active{
+      color:var(--gold);border-color:rgba(232,185,35,.4);
+      background:rgba(232,185,35,.08);
+    }
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-2);
+      height:44px;padding:0 var(--sp-5);border-radius:var(--r-md);
+      font-size:14px;font-weight:600;letter-spacing:-.01em;
+      white-space:nowrap;user-select:none;
+      transition:background .15s,opacity .15s,transform .1s,box-shadow .15s;
+    }
+    .btn:active{transform:scale(.98)}
+    .btn:disabled{opacity:.45;pointer-events:none}
+    .btn-block{display:flex;width:100%}
+    .btn-primary{background:var(--gold);color:#0A0A0B;box-shadow:var(--shadow-gold)}
+    .btn-primary:hover{background:#F0C43A}
+    .btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border)}
+    .btn-ghost:hover{color:var(--text);border-color:var(--border-strong)}
+    .btn-sm{height:36px;padding:0 var(--sp-4);font-size:13px;border-radius:var(--r-sm)}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+    .card-pad{padding:var(--sp-4)}
+
+    .label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+    .body-sm{font-size:13px;line-height:1.55;color:var(--text-2)}
+
+    .balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2)}
+    .balance-tile{padding:var(--sp-3);border-radius:var(--r-md);background:var(--surface-2);border:1px solid var(--border)}
+    .balance-amount{font-size:18px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+
+    .acc-head{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+    .avatar{
+      width:40px;height:40px;flex:0 0 40px;border-radius:50%;
+      display:grid;place-items:center;
+      background:linear-gradient(145deg,var(--surface-2),var(--surface));
+      border:1px solid var(--border-strong);
+      font-size:15px;font-weight:700;color:var(--gold);
+    }
+    .acc-info{min-width:0;flex:1}
+    .acc-email{font-size:14px;font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .acc-badge{
+      flex:0 0 auto;font-size:10.5px;font-weight:700;letter-spacing:.03em;
+      padding:4px 10px;border-radius:var(--r-full);
+      background:rgba(52,211,153,.12);color:#5EE3B0;
+    }
+    .tile-top{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+    .tile-dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+    .dot-usdt{background:#5EE3B0}
+    .dot-idr{background:var(--gold)}
+    .tile-label{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3)}
+    .acc-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}
+    .acc-row+.acc-row{border-top:1px solid var(--border)}
+    .acc-row-right{display:flex;align-items:center;gap:8px}
+    .acc-row-value{font-size:12.5px;font-weight:600;color:var(--text-2)}
+    .acc-row-value.mono{font-family:ui-monospace,monospace;letter-spacing:-.01em}
+    .copy-btn{
+      display:grid;place-items:center;width:22px;height:22px;flex:0 0 22px;
+      border-radius:6px;color:var(--text-3);transition:color .15s,background .15s;
+    }
+    .copy-btn:hover{color:var(--gold);background:var(--surface-2)}
+    .copy-btn svg{width:13px;height:13px}
+
+    .carousel{
+      position:relative;overflow:hidden;border-radius:var(--r-lg);
+      background:var(--surface-2);border:1px solid var(--border);aspect-ratio:16/9;
+    }
+    .carousel-track{display:flex;width:100%;height:100%;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+    .carousel-track.dragging{transition:none}
+    .carousel-slide{flex:0 0 100%;width:100%;height:100%;display:grid;place-items:center;overflow:hidden}
+    .carousel-slide img{width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
+    .carousel-nav{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10}
+    .carousel-dot{
+      width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);
+      cursor:pointer;transition:background .3s,width .3s;border:none;padding:0;
+    }
+    .carousel-dot.active{background:var(--gold);width:24px;border-radius:var(--r-full)}
+    .carousel-dot:hover{background:rgba(255,255,255,.5)}
+    .carousel-btn{
+      position:absolute;top:50%;transform:translateY(-50%);z-index:5;
+      width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+      background:rgba(10,10,11,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+      color:#fff;opacity:0;transition:opacity .2s;
+    }
+    .carousel-btn svg{width:18px;height:18px}
+    .carousel-btn.prev{left:10px}
+    .carousel-btn.next{right:10px}
+    .carousel:hover .carousel-btn{opacity:.6}
+    .carousel-btn:hover{opacity:1 !important}
+
+    .home-stat{
+      display:grid;grid-template-columns:1fr 1fr;
+      background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;
+    }
+    .home-stat-cell{padding:14px}
+    .home-stat-cell+.home-stat-cell{border-left:1px solid var(--border)}
+    .home-stat-num{font-size:21px;font-weight:700;color:var(--gold);letter-spacing:-.02em;line-height:1.2;font-variant-numeric:tabular-nums}
+    .home-stat-cap{font-size:11px;color:var(--text-3);margin-top:3px}
+
+    .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+    .sec-title{font-size:13.5px;font-weight:700;letter-spacing:-.01em}
+    .sec-link{font-size:11.5px;font-weight:600;color:var(--gold)}
+
+    .svc-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2)}
+    .svc{
+      display:flex;flex-direction:column;gap:7px;padding:13px;
+      border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--border);
+      transition:border-color .15s,background .15s;
+    }
+    .svc:hover{border-color:var(--border-strong)}
+    .svc:active{background:var(--surface-2)}
+    .svc-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--gold-soft);color:var(--gold)}
+    .svc-ico svg{width:16px;height:16px}
+    .svc-name{font-size:12.5px;font-weight:600;line-height:1.3}
+    .svc-desc{font-size:11px;color:var(--text-3);line-height:1.5}
+
+    .adv-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+    .adv{display:flex;gap:11px;padding:13px var(--sp-4)}
+    .adv+.adv{border-top:1px solid var(--border)}
+    .adv-ico{
+      width:28px;height:28px;flex:0 0 28px;border-radius:8px;
+      display:grid;place-items:center;background:rgba(52,211,153,.1);color:var(--success);margin-top:1px;
+    }
+    .adv-ico svg{width:15px;height:15px}
+    .adv-title{font-size:12.5px;font-weight:600;margin-bottom:1px}
+    .adv-desc{font-size:11.5px;color:var(--text-3);line-height:1.6}
+
+    .steps{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:4px var(--sp-4)}
+    .step{display:flex;gap:11px;padding:12px 0}
+    .step+.step{border-top:1px solid var(--border)}
+    .step-num{
+      width:22px;height:22px;flex:0 0 22px;border-radius:50%;
+      display:grid;place-items:center;font-size:11px;font-weight:700;
+      background:var(--gold-soft);color:var(--gold);margin-top:1px;
+    }
+    .step-title{font-size:12.5px;font-weight:600;margin-bottom:1px}
+    .step-desc{font-size:11.5px;color:var(--text-3);line-height:1.6}
+
+    .cta-card{
+      display:flex;align-items:center;gap:12px;padding:14px;border-radius:var(--r-lg);
+      background:linear-gradient(135deg,rgba(232,185,35,.1),rgba(232,185,35,.02));
+      border:1px solid rgba(232,185,35,.22);transition:border-color .15s;
+    }
+    .cta-card:hover{border-color:rgba(232,185,35,.4)}
+    .cta-ico{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;background:rgba(232,185,35,.15);color:var(--gold)}
+    .cta-ico svg{width:17px;height:17px}
+    .cta-body{flex:1;min-width:0}
+    .cta-title{font-size:12.5px;font-weight:700}
+    .cta-desc{font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.5}
+    .cta-chev{color:var(--gold);flex:0 0 auto}
+    .cta-chev svg{width:16px;height:16px}
+
+    .bottom-nav{
+      position:fixed;bottom:0;left:0;right:0;z-index:70;
+      display:flex;justify-content:center;
+      background:rgba(15,15,17,.94);
+      backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border-top:1px solid var(--border);
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    .bottom-nav-inner{display:flex;align-items:stretch;width:100%;max-width:430px;height:var(--nav-h)}
+    .nav-item{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+      color:var(--text-3);font-size:10.5px;font-weight:600;transition:color .15s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .nav-item svg{width:21px;height:21px}
+    .nav-item.active{color:var(--gold)}
+    .nav-item:active{opacity:.7}
+    .nav-buy{flex:0 0 68px;position:relative}
+    .nav-buy-btn{
+      width:54px;height:54px;border-radius:50%;background:var(--gold);
+      display:grid;place-items:center;box-shadow:var(--shadow-gold);margin-top:-22px;transition:transform .12s;
+    }
+    .nav-buy-btn svg{width:23px;height:23px;color:#0A0A0B}
+    .nav-buy:active .nav-buy-btn{transform:scale(.95)}
+    .nav-buy .nav-label-buy{color:var(--gold);font-weight:700}
+
+    .spin{
+      width:28px;height:28px;border-radius:50%;
+      border:3px solid var(--border-strong);border-top-color:var(--gold);
+      animation:sp .7s linear infinite;margin:40px auto;display:block;
+    }
+    @keyframes sp{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){.spin{animation-duration:2s}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <img src="https://raw.githubusercontent.com/veronica-fish/veltrix/main/img/logo.png" alt="VELTRIX" class="brand" />
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="lang-switcher">
+          <button class="lang-btn" data-lang="id" data-i18n="lang.id" onclick="setLang('id')">ID</button>
+          <button class="lang-btn" data-lang="zh" data-i18n="lang.zh" onclick="setLang('zh')">中文</button>
+          <button class="lang-btn" data-lang="en" data-i18n="lang.en" onclick="setLang('en')">EN</button>
+        </div>
+        <div id="topActions">
+          <a href="login.html" class="btn btn-primary btn-sm" data-i18n="home.masuk">Masuk</a>
+        </div>
+      </div>
+    </header>
+
+    <main style="padding:16px;display:flex;flex-direction:column;gap:16px">
+
+      <section id="akun">
+        <div class="card card-pad" style="text-align:center;padding:32px 24px">
+          <div style="font-size:13px;color:var(--text-2);margin-bottom:14px" data-i18n="home.masukDesc">
+            Masuk untuk melihat saldo dan riwayat transaksi kamu.
+          </div>
+          <a href="login.html" class="btn btn-primary" style="margin:0 auto" data-i18n="home.masukBtn">Masuk Sekarang</a>
+        </div>
+      </section>
+
+      <section>
+        <div class="carousel" id="carousel" role="region" aria-label="Banner promosi">
+          <div class="carousel-track" id="track">
+            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/veronica-fish/veltrix/main/img/b01.png" alt="Banner 1" /></div>
+            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/veronica-fish/veltrix/main/img/b02.png" alt="Banner 2" /></div>
+            <div class="carousel-slide"><img src="https://raw.githubusercontent.com/veronica-fish/veltrix/main/img/b03.png" alt="Banner 3" /></div>
+          </div>
+          <div class="carousel-nav" id="dots"></div>
+          <button type="button" class="carousel-btn prev" id="prevBtn" aria-label="Sebelumnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button type="button" class="carousel-btn next" id="nextBtn" aria-label="Berikutnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <div class="home-stat">
+          <div class="home-stat-cell">
+            <div class="home-stat-num">2K+</div>
+            <div class="home-stat-cap" data-i18n="home.statUser">Pengguna Aktif</div>
+          </div>
+          <div class="home-stat-cell">
+            <div class="home-stat-num">10K+</div>
+            <div class="home-stat-cap" data-i18n="home.statTrx">Transaksi Berhasil</div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-title" data-i18n="home.layanan">Layanan Populer</div>
+          <a href="beli.html" class="sec-link" data-i18n="home.lihatSemua">Lihat Semua</a>
+        </div>
+        <div class="svc-grid">
+          <a href="beli.html" class="svc">
+            <div class="svc-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
+            </div>
+            <div class="svc-name" data-i18n="svc.metaone.name">MetaOne Account</div>
+            <div class="svc-desc" data-i18n="svc.metaone.desc">Pilihan negara bervariasi</div>
+          </a>
+          <a href="beli.html" class="svc">
+            <div class="svc-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg>
+            </div>
+            <div class="svc-name" data-i18n="svc.emailcode.name">Company Email Code</div>
+            <div class="svc-desc" data-i18n="svc.emailcode.desc">Code + Documents</div>
+          </a>
+          <a href="beli.html" class="svc">
+            <div class="svc-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7"/>
+                <path d="M2 7h20v5H2z"/><path d="M12 22V7"/>
+                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+              </svg>
+            </div>
+            <div class="svc-name" data-i18n="svc.emailacc.name">Company Email Account</div>
+            <div class="svc-desc" data-i18n="svc.emailacc.desc">Terima hingga 100 kode dalam 1 email</div>
+          </a>
+          <a href="isi-saldo.html" class="svc">
+            <div class="svc-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20"/><path d="M6 15h4"/></svg>
+            </div>
+            <div class="svc-name" data-i18n="svc.saldo.name">Isi Saldo</div>
+            <div class="svc-desc" data-i18n="svc.saldo.desc">Top up USDT &amp; IDR</div>
+          </a>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-title" data-i18n="home.kenapa">Kenapa VELTRIX</div>
+        </div>
+        <div class="adv-list">
+          <div class="adv">
+            <div class="adv-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z"/></svg></div>
+            <div>
+              <div class="adv-title" data-i18n="adv.1.title">Proses Otomatis</div>
+              <div class="adv-desc" data-i18n="adv.1.desc">Pesanan diproses oleh sistem tanpa antrean manual, hasilnya langsung diterima.</div>
+            </div>
+          </div>
+          <div class="adv">
+            <div class="adv-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <div>
+              <div class="adv-title" data-i18n="adv.2.title">Transaksi Aman</div>
+              <div class="adv-desc" data-i18n="adv.2.desc">Data dan pembayaran diproses sesuai Kebijakan Privasi dan standar keamanan VELTRIX.</div>
+            </div>
+          </div>
+          <div class="adv">
+            <div class="adv-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <div>
+              <div class="adv-title" data-i18n="adv.3.title">Status Transparan</div>
+              <div class="adv-desc" data-i18n="adv.3.desc">Pantau setiap tahap pesanan secara real-time langsung di menu Transaksi.</div>
+            </div>
+          </div>
+          <div class="adv">
+            <div class="adv-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <div>
+              <div class="adv-title" data-i18n="adv.4.title">Dukungan Responsif</div>
+              <div class="adv-desc" data-i18n="adv.4.desc">Tim siap membantu setiap hari pukul 09.00–21.00 WIB melalui email dukungan.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="sec-head">
+          <div class="sec-title" data-i18n="home.cara">Cara Bertransaksi</div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div><div class="step-title" data-i18n="step.1.title">Daftar &amp; Masuk</div><div class="step-desc" data-i18n="step.1.desc">Buat akun dengan email kamu, lalu masuk ke Platform VELTRIX.</div></div></div>
+          <div class="step"><div class="step-num">2</div><div><div class="step-title" data-i18n="step.2.title">Isi Saldo</div><div class="step-desc" data-i18n="step.2.desc">Top up saldo melalui metode USDT atau IDR sesuai kebutuhan.</div></div></div>
+          <div class="step"><div class="step-num">3</div><div><div class="step-title" data-i18n="step.3.title">Pilih Produk</div><div class="step-desc" data-i18n="step.3.desc">Tentukan produk, jumlah, dan metode pembayaran saldo yang diinginkan.</div></div></div>
+          <div class="step"><div class="step-num">4</div><div><div class="step-title" data-i18n="step.4.title">Terima Pesanan</div><div class="step-desc" data-i18n="step.4.desc">Pantau status di menu Transaksi hingga pesanan berstatus Selesai.</div></div></div>
+        </div>
+      </section>
+
+      <section>
+        <a href="bantuan.html" class="cta-card">
+          <div class="cta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 1 1 4.4 2.7c-.9.5-1.5 1.2-1.5 2.3"/><path d="M12 17h.01"/></svg></div>
+          <div class="cta-body">
+            <div class="cta-title" data-i18n="home.bantuanJudul">Butuh bantuan?</div>
+            <div class="cta-desc" data-i18n="home.bantuanDesc">Temukan jawaban seputar saldo, transaksi, dan akun di Pusat Bantuan.</div>
+          </div>
+          <div class="cta-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        </a>
+      </section>
+
+    </main>
+  </div>
+
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="index.html" class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>
+        <span data-i18n="nav.home">Home</span>
+      </a>
+      <a href="isi-saldo.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M16 12.5h2.5"/><path d="M3 10h18"/></svg>
+        <span data-i18n="nav.isisaldo">Isi Saldo</span>
+      </a>
+      <a href="beli.html" class="nav-item nav-buy">
+        <div class="nav-buy-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h2.2l2.5 11h10.3l1.9-7.5H6.2"/></svg>
+        </div>
+        <span class="nav-label-buy" data-i18n="nav.beli">Beli</span>
+      </a>
+      <a href="transaksi.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5"/><path d="M9.5 12.5h5"/></svg>
+        <span data-i18n="nav.transaksi">Transaksi</span>
+      </a>
+      <a href="profil.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg>
+        <span data-i18n="nav.profil">Profil</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    const SUPABASE_URL = "https://rqqcdbbbcvhfjxznpowh.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_hTtIwFW3VFZj9p6qthAb3w_HbP5lVjs";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const esc    = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    const rupiah = n => "Rp " + Number(n||0).toLocaleString("id-ID");
+    const usdt   = n => "$" + Number(n||0).toLocaleString("id-ID",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    async function init(){
+      const { data:{ session } } = await sb.auth.getSession();
+      if (session) renderLogin(session.user);
+    }
+
+    sb.auth.onAuthStateChange((_e, session) => {
+      if (session) renderLogin(session.user);
+    });
+
+    function renderLogin(user){
+      const email   = user.email || "Akun Google";
+      const inisial = email.charAt(0).toUpperCase();
+      const shortId = user.id ? user.id.slice(0,8)+"…"+user.id.slice(-4) : "-";
+      const login   = user.last_sign_in_at
+        ? new Date(user.last_sign_in_at).toLocaleString("id-ID",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})
+        : "-";
+
+      document.getElementById("topActions").innerHTML =
+        `<button class="btn btn-ghost btn-sm" id="logoutBtn" data-i18n="logout">Keluar</button>`;
+
+      document.getElementById("akun").innerHTML = `
+        <div class="card">
+          <div class="card-pad acc-head">
+            <div class="avatar">${esc(inisial)}</div>
+            <div class="acc-info">
+              <div class="label" data-i18n="acc.akun">Akun</div>
+              <div class="acc-email">${esc(email)}</div>
+            </div>
+            <span class="acc-badge" data-i18n="acc.aktif">Aktif</span>
+          </div>
+          <div class="card-pad" style="border-bottom:1px solid var(--border)">
+            <div class="label" style="margin-bottom:10px" data-i18n="acc.saldo">Saldo</div>
+            <div class="balance-grid">
+              <div class="balance-tile">
+                <div class="tile-top"><span class="tile-dot dot-usdt"></span><span class="tile-label">USDT</span></div>
+                <div class="balance-amount">${usdt(0)}</div>
+              </div>
+              <div class="balance-tile">
+                <div class="tile-top"><span class="tile-dot dot-idr"></span><span class="tile-label">IDR</span></div>
+                <div class="balance-amount">${rupiah(0)}</div>
+              </div>
+            </div>
+            <a href="isi-saldo.html" class="btn btn-primary btn-block" style="margin-top:14px" data-i18n="acc.isiSaldo">Isi Saldo</a>
+          </div>
+          <div class="card-pad" style="padding-top:4px;padding-bottom:4px">
+            <div class="acc-row">
+              <span class="label" data-i18n="acc.idAkun">ID Akun</span>
+              <span class="acc-row-right">
+                <span class="acc-row-value mono" id="accId">${esc(shortId)}</span>
+                <button type="button" class="copy-btn" id="copyId" aria-label="Salin ID akun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+                </button>
+              </span>
+            </div>
+            <div class="acc-row">
+              <span class="label" data-i18n="acc.loginTerakhir">Terakhir Login</span>
+              <span class="acc-row-value">${esc(login)}</span>
+            </div>
+          </div>
+        </div>`;
+
+      applyLang(getLang());
+
+      document.getElementById("copyId").addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(user.id);
+          const btn = document.getElementById("copyId");
+          btn.style.color = "#5EE3B0";
+          setTimeout(() => { btn.style.color = ""; }, 1200);
+        } catch {}
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await sb.auth.signOut();
+        location.reload();
+      });
+    }
+
+    // Carousel
+    const carousel = document.getElementById("carousel");
+    const track    = document.getElementById("track");
+    const dotsEl   = document.getElementById("dots");
+    const slides   = track.querySelectorAll(".carousel-slide");
+    const total    = slides.length;
+    let cur = 0, autoTimeout, startX = 0, endX = 0, isMouseDown = false;
+
+    for (let i = 0; i < total; i++){
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "carousel-dot" + (i === 0 ? " active" : "");
+      dot.setAttribute("aria-label", `Slide ${i+1}`);
+      dot.addEventListener("click", () => goTo(i));
+      dotsEl.appendChild(dot);
+    }
+    const dots = dotsEl.querySelectorAll(".carousel-dot");
+
+    function updateTrack(){
+      track.style.transform = `translateX(-${cur * 100}%)`;
+      dots.forEach((d,i) => d.classList.toggle("active", i === cur));
+      clearTimeout(autoTimeout);
+      autoTimeout = setTimeout(() => goTo(cur + 1), 7000);
+    }
+    function goTo(idx){ cur = (idx + total) % total; updateTrack(); }
+
+    document.getElementById("prevBtn").addEventListener("click", () => goTo(cur - 1));
+    document.getElementById("nextBtn").addEventListener("click", () => goTo(cur + 1));
+
+    carousel.addEventListener("touchstart", e => { startX = e.touches[0].clientX; endX = startX; track.classList.add("dragging"); clearTimeout(autoTimeout); }, {passive:true});
+    carousel.addEventListener("touchmove",  e => { endX = e.touches[0].clientX; track.style.transform = `translateX(calc(-${cur*100}% + ${endX-startX}px))`; }, {passive:true});
+    carousel.addEventListener("touchend",   () => { track.classList.remove("dragging"); Math.abs(endX-startX) > carousel.offsetWidth*.25 ? goTo(cur+(endX-startX>0?-1:1)) : updateTrack(); });
+    carousel.addEventListener("mousedown",  e => { isMouseDown=true; startX=e.clientX; endX=startX; track.classList.add("dragging"); clearTimeout(autoTimeout); });
+        carousel.addEventListener("mousemove", e => {
+      if (!isMouseDown) return;
+      endX = e.clientX;
+      track.style.transform = `translateX(calc(-${cur*100}% + ${endX-startX}px))`;
+    });
+
+    const endDrag = () => {
+      if (!isMouseDown) return;
+      isMouseDown = false;
+      track.classList.remove("dragging");
+      Math.abs(endX - startX) > carousel.offsetWidth * .25
+        ? goTo(cur + (endX - startX > 0 ? -1 : 1))
+        : updateTrack();
+    };
+    document.addEventListener("mouseup", endDrag);
+    carousel.addEventListener("mouseleave", endDrag);
+
+    updateTrack();
+    init();
+  </script>
+</body>
+</html>
