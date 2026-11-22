@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A0B" />
+<title>Kebijakan Privasi — VELTRIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0A0A0B;--surface:#141416;--surface-2:#1A1A1D;
+  --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+  --text:#F2F2F3;--text-2:#A0A0A8;--text-3:#6B6B74;
+  --gold:#E8B923;--danger:#F87171;--ok:#5EE3B0;
+  --sh:0 6px 20px rgba(232,185,35,.22);
+  --rm:10px;--rd:14px;--rl:20px;--rf:999px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--gold);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+.app{max-width:430px;margin:0 auto;min-height:100dvh;padding-bottom:40px}
+
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:rgba(10,10,11,.88);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.back-btn{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;
+  border-radius:50%;background:var(--surface-2);border:1px solid var(--border)}
+.back-btn svg{width:17px;height:17px}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.01em;flex:1}
+
+.lang-switch{display:flex;gap:4px}
+.lang-btn{
+  padding:4px 8px;border-radius:var(--rm);
+  font-size:11px;font-weight:700;color:var(--text-3);
+  border:1px solid var(--border);transition:color .15s,border-color .15s,background .15s;
+}
+.lang-btn.active{color:var(--gold);border-color:rgba(232,185,35,.4);background:rgba(232,185,35,.08)}
+
+.wrap{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+.last-updated{font-size:11.5px;color:var(--text-3);text-align:center;
+  padding:10px 16px;background:var(--surface-2);border-radius:var(--rd);
+  border:1px solid var(--border)}
+
+/* Kartu */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  overflow:hidden}
+.card-head{display:flex;align-items:center;gap:10px;padding:16px;
+  border-bottom:1px solid var(--border);cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;transition:background .15s}
+.card-head:active{background:var(--surface-2)}
+.card-icon{width:32px;height:32px;flex:0 0 32px;border-radius:9px;
+  background:rgba(232,185,35,.1);color:var(--gold);display:grid;place-items:center}
+.card-icon svg{width:16px;height:16px}
+.card-title{flex:1;font-size:13.5px;font-weight:700;letter-spacing:-.01em}
+.card-chev{color:var(--text-3);transition:transform .22s}
+.card-chev svg{width:16px;height:16px}
+.card[open] .card-chev{transform:rotate(90deg)}
+
+.card-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+.prose{font-size:13px;line-height:1.8;color:var(--text-2)}
+.prose p+p{margin-top:10px}
+.prose b,.prose strong{color:var(--text);font-weight:600}
+.prose em{color:var(--gold);font-style:normal;font-weight:600}
+
+.reg-list{list-style:none;display:flex;flex-direction:column;gap:8px;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rd);
+  padding:12px 14px}
+.reg-list li{display:flex;gap:8px;font-size:12.5px;color:var(--text-2);line-height:1.6}
+.reg-list li::before{content:"–";color:var(--gold);flex:0 0 auto}
+
+.section-title{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:4px}
+
+.def-list{display:flex;flex-direction:column;gap:0}
+.def-row{padding:11px 0}
+.def-row+.def-row{border-top:1px solid var(--border)}
+.def-term{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:3px}
+.def-desc{font-size:12.5px;color:var(--text-2);line-height:1.7}
+
+.basis-list{display:flex;flex-direction:column;gap:10px}
+.basis-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rd);
+  padding:12px 14px}
+.basis-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;padding:2px 8px;border-radius:var(--rf);
+  background:rgba(232,185,35,.12);color:var(--gold);margin-bottom:7px}
+.basis-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px}
+.basis-desc{font-size:12.5px;color:var(--text-2);line-height:1.7}
+
+.cookie-list{display:flex;flex-direction:column;gap:10px}
+.cookie-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rd);
+  padding:12px 14px}
+.cookie-name{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cookie-badge{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;padding:2px 7px;border-radius:var(--rf);margin-left:6px;
+  vertical-align:middle}
+.badge-required{background:rgba(248,113,113,.12);color:#FCA5A5}
+.badge-optional{background:rgba(94,227,176,.1);color:var(--ok)}
+.cookie-desc{font-size:12px;color:var(--text-2);line-height:1.7}
+
+.manage-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.manage-list li{display:flex;gap:8px;font-size:12.5px;color:var(--text-2);line-height:1.65}
+.manage-list li .num{flex:0 0 18px;font-weight:700;color:var(--gold)}
+
+.footer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  padding:16px;text-align:center}
+.footer-name{font-size:14px;font-weight:700;letter-spacing:.04em;color:var(--gold)}
+.footer-sub{font-size:11.5px;color:var(--text-3);margin-top:4px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="profil.html" class="back-btn" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="topbar-title" id="topbarTitle"></div>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="id">ID</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+  </header>
+
+  <div class="wrap" id="root"></div>
+</div>
+
+<script src="lang.js"></script>
+<script>
+(function(){
+"use strict";
+
+const $=id=>document.getElementById(id);
+let currentLang = "id";
+
+const DATA = {
+id:{
+  topbarTitle:"Kebijakan Privasi",
+  lastUpdated:"Berlaku efektif: 1 Januari 2026 &nbsp;·&nbsp; PT Sotta Teknologi Indonesia",
+  cards:[
+    {
+      icon:"shield",
+      title:"Kebijakan Privasi",
+      open:true,
+      prose:[
+        'Kebijakan Privasi ini (<strong>"Kebijakan"</strong>) beserta Syarat &amp; Ketentuan Platform VELTRIX sebagaimana tercantum dalam halaman terkait, menetapkan dasar terhadap segala perolehan, pengumpulan, pengolahan, penganalisisan, penampilan, pembukaan, penyimpanan, perubahan, penghapusan dan/atau segala bentuk pengelolaan yang terkait dengan data atau informasi yang mengidentifikasikan atau dapat digunakan untuk mengenali Pengguna yang Pengguna berikan kepada VELTRIX atau VELTRIX kumpulkan dari Pengguna (untuk selanjutnya disebut sebagai <strong>"Data Pribadi"</strong>).',
+        'Kebijakan Privasi ini diterbitkan oleh <strong>PT Sotta Teknologi Indonesia</strong>, pemilik dan operator Platform VELTRIX (<a href="https://veltrixtech.web.id" target="_blank" rel="noopener">veltrixtech.web.id</a>), sebagai Pengendali Data Pribadi sebagaimana didefinisikan dalam <strong>Undang-Undang No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)</strong> yang berlaku penuh sejak 17 Oktober 2024.',
+        'Kebijakan ini berlaku terhadap seluruh Pengguna Platform, termasuk pengunjung, pembeli, penjual, mitra (reseller), dan pihak lain yang berinteraksi dengan layanan VELTRIX, baik melalui situs web, aplikasi mobile, maupun sarana elektronik lain yang dikelola PT Sotta Teknologi Indonesia.',
+        'Dengan menggunakan Platform dan layanan VELTRIX, Pengguna menyatakan telah membaca, memahami, dan menyetujui seluruh ketentuan yang berlaku. Apabila Pengguna tidak menyetujui Kebijakan ini, Pengguna disarankan untuk segera berhenti mengakses atau menggunakan layanan Platform VELTRIX.',
+        'Kebijakan ini merupakan bagian tidak terpisahkan dari Syarat &amp; Ketentuan Platform.'
+      ],
+      regListTitle:"Dasar Regulasi yang Berlaku",
+      regList:[
+        "UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)",
+        "UU No. 19 Tahun 2016 tentang Informasi dan Transaksi Elektronik (UU ITE)",
+        "PP No. 71 Tahun 2019 tentang Penyelenggaraan Sistem dan Transaksi Elektronik",
+        "Permenkominfo No. 20 Tahun 2016 tentang Perlindungan Data Pribadi dalam Sistem Elektronik"
+      ]
+    },
+    {
+      icon:"list",
+      title:"Definisi",
+      prose:['Dalam Kebijakan ini, istilah-istilah berikut memiliki arti sebagai berikut:'],
+      defList:[
+        ["Platform","Seluruh layanan VELTRIX yang dapat diakses melalui veltrixtech.web.id, aplikasi mobile VELTRIX, dan sarana elektronik lain yang dikelola oleh PT Sotta Teknologi Indonesia."],
+        ["Pengguna / Anda","Setiap orang yang mengakses, mendaftar, atau menggunakan layanan Platform, termasuk pembeli, penjual, mitra, dan pengunjung."],
+        ["Data Pribadi","Setiap data tentang seseorang yang teridentifikasi atau dapat diidentifikasi, baik secara langsung maupun tidak langsung, sesuai Pasal 1 angka 1 UU PDP."],
+        ["Data Pribadi Sensitif","Data pribadi yang memerlukan perlindungan lebih ketat, mencakup data kesehatan, data biometrik, data keuangan, data anak, dan data lainnya sebagaimana diatur Pasal 4 ayat (2) UU PDP."],
+        ["Pengendali Data","PT Sotta Teknologi Indonesia, sebagai pihak yang menentukan tujuan dan cara pemrosesan Data Pribadi Pengguna."],
+        ["Pengolah Data","Pihak ketiga yang memproses Data Pribadi atas instruksi Pengendali Data, berdasarkan perjanjian pengolahan data yang mengikat."],
+        ["Subjek Data","Pengguna sebagai orang yang Data Pribadinya diproses oleh VELTRIX."],
+        ["Pemrosesan","Setiap operasi terhadap Data Pribadi, termasuk pengumpulan, penyimpanan, penggunaan, pengungkapan, penghapusan, dan pemusnahan."],
+        ["Persetujuan (Consent)","Pernyataan persetujuan yang diberikan secara bebas, spesifik, terinformasi, dan tidak ambigu oleh Subjek Data terhadap pemrosesan Data Pribadinya."]
+      ]
+    },
+    {
+      icon:"check",
+      title:"Dasar Hukum Pemrosesan Data Pribadi",
+      prose:['Sesuai Pasal 20 UU PDP, seluruh pemrosesan Data Pribadi yang dilakukan VELTRIX didasarkan pada satu atau lebih dari dasar hukum yang sah berikut ini.'],
+      basisList:[
+        ["Pasal 20 huruf b","Pelaksanaan Perjanjian (Kontrak)","Berlaku untuk pemrosesan yang diperlukan guna melaksanakan perjanjian antara VELTRIX dan Pengguna, mencakup pembuatan dan pengelolaan akun, pemrosesan transaksi, penanganan keluhan, serta notifikasi operasional."],
+        ["Pasal 20 huruf c","Kewajiban Hukum","Berlaku apabila pemrosesan diperlukan untuk memenuhi kewajiban hukum, mencakup verifikasi identitas (KYC), pelaporan kepada PPATK, OJK, Direktorat Jenderal Pajak, Komdigi, serta pemenuhan permintaan resmi dari aparat penegak hukum."],
+        ["Pasal 20 huruf f","Kepentingan yang Sah (Legitimate Interest)","Berlaku untuk pemrosesan yang diperlukan guna memenuhi kepentingan yang sah dari VELTRIX, selama tidak mengesampingkan hak Pengguna, mencakup pencegahan fraud, peningkatan keamanan sistem, dan analisis pengembangan layanan."],
+        ["Pasal 20 huruf a","Persetujuan (Consent)","Berlaku untuk pemrosesan opsional yang memerlukan persetujuan eksplisit, terutama pengiriman informasi promosi dan komunikasi pemasaran. Persetujuan ini bersifat sukarela dan dapat ditarik kapan saja tanpa konsekuensi terhadap layanan utama."]
+      ]
+    },
+    {
+      icon:"cookie",
+      title:"Kebijakan Cookie",
+      prose:['Cookie adalah file data kecil yang tersimpan otomatis di perangkat Pengguna saat mengunjungi Platform VELTRIX. Cookie tidak digunakan untuk mengakses data lain di luar yang telah diizinkan.'],
+      cookieList:[
+        ["Cookie Esensial","Wajib",true,"Diperlukan agar fungsi dasar Platform berjalan, termasuk sesi login, keamanan sesi, dan perlindungan CSRF. Tidak dapat dinonaktifkan dan tidak digunakan untuk pemasaran."],
+        ["Cookie Preferensi","Opsional",false,"Mengingat pilihan dan pengaturan Pengguna seperti preferensi bahasa, tampilan antarmuka, dan zona waktu agar tidak perlu diatur ulang setiap kunjungan."],
+        ["Cookie Analitik","Opsional",false,"Mengumpulkan data agregat dan anonim tentang interaksi Pengguna dengan Platform — halaman yang dikunjungi, durasi, dan fitur yang digunakan — untuk keperluan peningkatan layanan semata."],
+        ["Cookie Pemasaran","Opsional",false,"Menyajikan iklan dan konten promosi yang relevan. Hanya aktif apabila Pengguna memberikan persetujuan eksplisit dan dapat dicabut kapan saja."]
+      ],
+      manageTitle:"Cara Mengelola Cookie",
+      manageList:[
+        "Melalui pengaturan browser untuk menonaktifkan atau menghapus cookie — menonaktifkan cookie esensial akan mempengaruhi fungsi Platform.",
+        "Melalui banner persetujuan cookie yang ditampilkan saat pertama kali mengakses Platform.",
+        "Melalui menu pengaturan privasi di akun Pengguna yang terdaftar."
+      ]
+    },
+    {
+      icon:"edit",
+      title:"Perubahan Kebijakan Privasi",
+      prose:[
+        'VELTRIX berhak memperbarui, merevisi, atau mengubah Kebijakan Privasi ini dari waktu ke waktu, sejalan dengan perkembangan bisnis, perubahan teknologi, atau perubahan peraturan perundang-undangan yang berlaku.',
+        'Untuk perubahan yang <strong>bersifat material</strong> — yaitu yang secara signifikan mempengaruhi hak Pengguna, cara Data Pribadi dikumpulkan, atau pihak yang menerima data — VELTRIX berkomitmen memberikan pemberitahuan paling lambat <strong>14 (empat belas) hari kalender</strong> sebelum perubahan berlaku, melalui email terdaftar dan/atau pengumuman di halaman utama Platform.',
+        'Untuk perubahan <strong>bersifat minor</strong> — seperti perbaikan redaksional atau pembaruan informasi kontak — VELTRIX dapat langsung memperbarui teks tanpa notifikasi terpisah.',
+        'Versi terbaru dan tanggal berlaku Kebijakan Privasi akan selalu dicantumkan secara jelas di bagian atas halaman ini.',
+        'Dengan melanjutkan penggunaan Platform setelah perubahan berlaku, Pengguna dianggap telah menyetujui Kebijakan Privasi yang diperbarui.',
+        'Apabila terdapat pertentangan antara versi Bahasa Indonesia dengan terjemahan bahasa lain, maka <strong>versi Bahasa Indonesia yang berlaku sebagai versi resmi yang mengikat.</strong>'
+      ]
+    }
+  ],
+  footerSub:"Pemilik &amp; Operator Platform VELTRIX<br>veltrixtech.web.id &nbsp;·&nbsp; © 2026 VELTRIX"
+},
+en:{
+  topbarTitle:"Privacy Policy",
+  lastUpdated:"Effective: January 1, 2026 &nbsp;·&nbsp; PT Sotta Teknologi Indonesia",
+  cards:[
+    {
+      icon:"shield",
+      title:"Privacy Policy",
+      open:true,
+      prose:[
+        'This Privacy Policy (<strong>"Policy"</strong>), together with the VELTRIX Platform Terms &amp; Conditions as set out on the relevant page, establishes the basis for any acquisition, collection, processing, analysis, display, disclosure, storage, alteration, deletion and/or any other form of management relating to data or information that identifies or can be used to identify a User, which the User provides to VELTRIX or which VELTRIX collects from the User (collectively referred to as <strong>"Personal Data"</strong>).',
+        'This Privacy Policy is issued by <strong>PT Sotta Teknologi Indonesia</strong>, the owner and operator of the VELTRIX Platform (<a href="https://veltrixtech.web.id" target="_blank" rel="noopener">veltrixtech.web.id</a>), as the Personal Data Controller as defined under <strong>Law No. 27 of 2022 on Personal Data Protection (PDP Law)</strong>, which has been in full effect since October 17, 2024.',
+        'This Policy applies to all Platform Users, including visitors, buyers, sellers, partners (resellers), and other parties interacting with VELTRIX services, whether through the website, mobile application, or other electronic means managed by PT Sotta Teknologi Indonesia.',
+        'By using the Platform and VELTRIX services, Users confirm that they have read, understood, and agreed to all applicable terms. If a User does not agree to this Policy, the User is advised to stop accessing or using the VELTRIX Platform immediately.',
+        'This Policy forms an integral part of the Platform Terms &amp; Conditions.'
+      ],
+      regListTitle:"Applicable Legal Basis",
+      regList:[
+        "Law No. 27 of 2022 on Personal Data Protection (PDP Law)",
+        "Law No. 19 of 2016 on Electronic Information and Transactions (ITE Law)",
+        "Government Regulation No. 71 of 2019 on the Implementation of Electronic Systems and Transactions",
+        "Minister of Communication and Informatics Regulation No. 20 of 2016 on Personal Data Protection in Electronic Systems"
+      ]
+    },
+    {
+      icon:"list",
+      title:"Definitions",
+      prose:['In this Policy, the following terms shall have the following meanings:'],
+      defList:[
+        ["Platform","All VELTRIX services accessible through veltrixtech.web.id, the VELTRIX mobile application, and other electronic means managed by PT Sotta Teknologi Indonesia."],
+        ["User / You","Any person who accesses, registers, or uses the Platform's services, including buyers, sellers, partners, and visitors."],
+        ["Personal Data","Any data about an identified or identifiable individual, directly or indirectly, as defined in Article 1(1) of the PDP Law."],
+        ["Sensitive Personal Data","Personal data requiring stricter protection, including health data, biometric data, financial data, children's data, and other data as regulated under Article 4(2) of the PDP Law."],
+        ["Data Controller","PT Sotta Teknologi Indonesia, as the party that determines the purposes and means of processing a User's Personal Data."],
+        ["Data Processor","A third party that processes Personal Data on the instructions of the Data Controller, based on a binding data processing agreement."],
+        ["Data Subject","The User whose Personal Data is processed by VELTRIX."],
+        ["Processing","Any operation performed on Personal Data, including collection, storage, use, disclosure, deletion, and destruction."],
+        ["Consent","A statement of agreement given freely, specifically, in an informed manner, and unambiguously by the Data Subject regarding the processing of their Personal Data."]
+      ]
+    },
+    {
+      icon:"check",
+      title:"Legal Basis for Processing Personal Data",
+      prose:['In accordance with Article 20 of the PDP Law, all Personal Data processing carried out by VELTRIX is based on one or more of the following valid legal grounds.'],
+      basisList:[
+        ["Article 20(b)","Performance of a Contract","Applies to processing necessary to perform the agreement between VELTRIX and the User, including account creation and management, transaction processing, complaint handling, and operational notifications."],
+        ["Article 20(c)","Legal Obligation","Applies where processing is necessary to comply with a legal obligation, including identity verification (KYC), reporting to PPATK, OJK, the Directorate General of Taxes, Komdigi, and compliance with official requests from law enforcement."],
+        ["Article 20(f)","Legitimate Interest","Applies to processing necessary to fulfil VELTRIX's legitimate interests, provided it does not override the User's rights, including fraud prevention, system security enhancement, and service development analysis."],
+        ["Article 20(a)","Consent","Applies to optional processing requiring explicit consent, particularly the sending of promotional information and marketing communications. This consent is voluntary and may be withdrawn at any time without affecting the core service."]
+      ]
+    },
+    {
+      icon:"cookie",
+      title:"Cookie Policy",
+      prose:['Cookies are small data files automatically stored on a User\'s device when visiting the VELTRIX Platform. Cookies are not used to access any data beyond what has been permitted.'],
+      cookieList:[
+        ["Essential Cookies","Required",true,"Necessary for the Platform's core functions, including login sessions, session security, and CSRF protection. Cannot be disabled and are not used for marketing."],
+        ["Preference Cookies","Optional",false,"Remember User choices and settings such as language preference, interface display, and time zone so they do not need to be reset on every visit."],
+        ["Analytics Cookies","Optional",false,"Collect aggregated, anonymous data on User interactions with the Platform — pages visited, duration, and features used — solely for service improvement purposes."],
+        ["Marketing Cookies","Optional",false,"Deliver relevant ads and promotional content. Only active if the User gives explicit consent and may be withdrawn at any time."]
+      ],
+      manageTitle:"How to Manage Cookies",
+      manageList:[
+        "Through browser settings to disable or delete cookies — disabling essential cookies will affect the Platform's functionality.",
+        "Through the cookie consent banner shown the first time the Platform is accessed.",
+        "Through the privacy settings menu in a registered User's account."
+      ]
+    },
+    {
+      icon:"edit",
+      title:"Changes to this Privacy Policy",
+      prose:[
+        'VELTRIX reserves the right to update, revise, or amend this Privacy Policy from time to time, in line with business developments, technological changes, or changes in applicable laws and regulations.',
+        'For <strong>material changes</strong> — i.e., changes that significantly affect User rights, how Personal Data is collected, or the parties receiving the data — VELTRIX commits to providing notice at least <strong>14 (fourteen) calendar days</strong> before the change takes effect, via the registered email and/or an announcement on the Platform\'s main page.',
+        'For <strong>minor changes</strong> — such as editorial corrections or updated contact information — VELTRIX may update the text directly without separate notification.',
+        'The latest version and effective date of the Privacy Policy will always be clearly stated at the top of this page.',
+        'By continuing to use the Platform after a change takes effect, the User is deemed to have agreed to the updated Privacy Policy.',
+        'In the event of any conflict between the Indonesian version and translations in other languages, the <strong>Indonesian version shall prevail as the official and binding version.</strong>'
+      ]
+    }
+  ],
+  footerSub:"Owner &amp; Operator of the VELTRIX Platform<br>veltrixtech.web.id &nbsp;·&nbsp; © 2026 VELTRIX"
+},
+zh:{
+  topbarTitle:"隐私政策",
+  lastUpdated:"生效日期：2026年1月1日 &nbsp;·&nbsp; PT Sotta Teknologi Indonesia",
+  cards:[
+    {
+      icon:"shield",
+      title:"隐私政策",
+      open:true,
+      prose:[
+        '本隐私政策（<strong>"本政策"</strong>）与相关页面所载的 VELTRIX 平台服务条款共同构成基础，规范有关识别或可用于识别用户的数据或信息的获取、收集、处理、分析、展示、披露、存储、变更、删除及/或任何其他形式的管理（以下统称<strong>"个人数据"</strong>），该等数据由用户提供给 VELTRIX 或由 VELTRIX 自用户处收集。',
+        '本隐私政策由 <strong>PT Sotta Teknologi Indonesia</strong> 发布，其为 VELTRIX 平台（<a href="https://veltrixtech.web.id" target="_blank" rel="noopener">veltrixtech.web.id</a>）的所有者及运营者，并依据自2024年10月17日起全面生效的<strong>《2022年第27号个人数据保护法》（PDP法）</strong>，作为个人数据控制者。',
+        '本政策适用于所有平台用户，包括访客、买家、卖家、合作伙伴（分销商）以及通过网站、移动应用程序或 PT Sotta Teknologi Indonesia 管理的其他电子方式与 VELTRIX 服务互动的其他各方。',
+        '用户使用本平台及 VELTRIX 服务即表示已阅读、理解并同意所有适用条款。如用户不同意本政策，建议立即停止访问或使用 VELTRIX 平台服务。',
+        '本政策是平台服务条款不可分割的一部分。'
+      ],
+      regListTitle:"适用法律依据",
+      regList:[
+        "《2022年第27号个人数据保护法》（PDP法）",
+        "《2016年第19号电子信息与交易法》（ITE法）",
+        "《2019年第71号电子系统与交易实施条例》",
+        "《通讯与信息部第20号关于电子系统中个人数据保护的条例》"
+      ]
+    },
+    {
+      icon:"list",
+      title:"定义",
+      prose:['本政策中，下列术语具有以下含义：'],
+      defList:[
+        ["平台","通过 veltrixtech.web.id、VELTRIX 移动应用程序以及 PT Sotta Teknologi Indonesia 管理的其他电子方式提供的所有 VELTRIX 服务。"],
+        ["用户 / 您","访问、注册或使用平台服务的任何人，包括买家、卖家、合作伙伴及访客。"],
+        ["个人数据","有关已识别或可识别个人的任何数据，无论是直接或间接的，依据 PDP 法第1条第1款定义。"],
+        ["敏感个人数据","需要更严格保护的个人数据，包括健康数据、生物识别数据、财务数据、儿童数据及 PDP 法第4条第2款规定的其他数据。"],
+        ["数据控制者","PT Sotta Teknologi Indonesia，作为决定用户个人数据处理目的与方式的一方。"],
+        ["数据处理者","根据具有约束力的数据处理协议，依照数据控制者指示处理个人数据的第三方。"],
+        ["数据主体","其个人数据由 VELTRIX 处理的用户。"],
+        ["处理","对个人数据进行的任何操作，包括收集、存储、使用、披露、删除及销毁。"],
+        ["同意","数据主体就其个人数据处理自由、明确、知情且无歧义地给出的同意声明。"]
+      ]
+    },
+    {
+      icon:"check",
+      title:"个人数据处理的法律依据",
+      prose:['依据 PDP 法第20条，VELTRIX 进行的所有个人数据处理均基于以下一项或多项合法依据。'],
+      basisList:[
+        ["第20条b款","合同履行","适用于履行 VELTRIX 与用户之间协议所必需的处理，包括账户创建与管理、交易处理、投诉处理以及运营通知。"],
+        ["第20条c款","法律义务","适用于为履行法律义务所必需的处理，包括身份验证（KYC）、向 PPATK、OJK、税务总局、通讯与信息部报告，以及响应执法机关的正式请求。"],
+        ["第20条f款","合法利益","适用于为实现 VELTRIX 合法利益所必需的处理，前提是不损害用户权利，包括防止欺诈、提升系统安全及服务开发分析。"],
+        ["第20条a款","同意","适用于需要明确同意的可选处理，尤其是发送推广信息及营销通讯。此同意为自愿性质，可随时撤回且不影响核心服务。"]
+      ]
+    },
+    {
+      icon:"cookie",
+      title:"Cookie 政策",
+      prose:['Cookie 是用户访问 VELTRIX 平台时自动存储在其设备上的小型数据文件。Cookie 不会用于访问许可范围之外的其他数据。'],
+      cookieList:[
+        ["必要性 Cookie","必需",true,"平台核心功能所必需，包括登录会话、会话安全及 CSRF 防护。无法禁用，且不用于营销目的。"],
+        ["偏好 Cookie","可选",false,"记住用户的选择与设置，如语言偏好、界面显示及时区，避免每次访问都需要重新设置。"],
+        ["分析 Cookie","可选",false,"收集有关用户与平台互动的汇总匿名数据——访问的页面、时长及使用的功能——仅用于改进服务。"],
+        ["营销 Cookie","可选",false,"展示相关广告及推广内容。仅在用户明确同意后启用，且可随时撤回。"]
+      ],
+      manageTitle:"如何管理 Cookie",
+      manageList:[
+        "通过浏览器设置禁用或删除 Cookie——禁用必要性 Cookie 将影响平台功能。",
+        "通过首次访问平台时显示的 Cookie 同意横幅。",
+        "通过已注册用户账户中的隐私设置菜单。"
+      ]
+    },
+    {
+      icon:"edit",
+      title:"隐私政策的变更",
+      prose:[
+        'VELTRIX 有权根据业务发展、技术变化或适用法律法规的变化，不时更新、修订或变更本隐私政策。',
+        '对于<strong>实质性变更</strong>——即显著影响用户权利、个人数据收集方式或数据接收方的变更——VELTRIX 承诺在变更生效前至少 <strong>14（十四）个日历日</strong>，通过注册邮箱及/或平台主页公告进行通知。',
+        '对于<strong>轻微变更</strong>——如文字修订或联系信息更新——VELTRIX 可直接更新文本，无需单独通知。',
+        '隐私政策的最新版本及生效日期将始终清楚标注于本页面顶部。',
+        '变更生效后，用户继续使用本平台即视为已同意更新后的隐私政策。',
+        '如印尼语版本与其他语言译本之间存在冲突，<strong>以印尼语版本为官方及具有约束力的版本。</strong>'
+      ]
+    }
+  ],
+  footerSub:"VELTRIX 平台所有者及运营者<br>veltrixtech.web.id &nbsp;·&nbsp; © 2026 VELTRIX"
+}
+};
+
+const ICONS = {
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+  list:'<path d="M4 6h16M4 10h10M4 14h7M4 18h5"/>',
+  check:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  cookie:'<circle cx="12" cy="12" r="9"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="13" r="1" fill="currentColor"/><circle cx="10" cy="15" r="1" fill="currentColor"/>',
+  edit:'<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>'
+};
+
+function iconSvg(name){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||"")+'</svg>';
+}
+function chevSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+}
+
+function renderCard(card, idx){
+  let body = "";
+  card.prose.forEach(function(p){ body += "<p>"+p+"</p>"; });
+  body = '<div class="prose">'+body+'</div>';
+
+  if(card.regList){
+    body += '<div><div class="section-title">'+card.regListTitle+'</div><ul class="reg-list">';
+    card.regList.forEach(function(item){ body += "<li><span>"+item+"</span></li>"; });
+    body += '</ul></div>';
+  }
+
+  if(card.defList){
+    body += '<div class="def-list">';
+    card.defList.forEach(function(d){
+      body += '<div class="def-row"><div class="def-term">'+d[0]+'</div><div class="def-desc">'+d[1]+'</div></div>';
+    });
+    body += '</div>';
+  }
+
+  if(card.basisList){
+    body += '<div class="basis-list">';
+    card.basisList.forEach(function(b){
+      body += '<div class="basis-box"><div class="basis-tag">'+b[0]+'</div><div class="basis-title">'+b[1]+'</div><div class="basis-desc">'+b[2]+'</div></div>';
+    });
+    body += '</div>';
+  }
+
+  if(card.cookieList){
+    body += '<div class="cookie-list">';
+    card.cookieList.forEach(function(c){
+      const badgeClass = c[2] ? "badge-required" : "badge-optional";
+      body += '<div class="cookie-box"><div class="cookie-name">'+c[0]+' <span class="cookie-badge '+badgeClass+'">'+c[1]+'</span></div><div class="cookie-desc">'+c[3]+'</div></div>';
+    });
+    body += '</div>';
+    body += '<div><div class="section-title">'+card.manageTitle+'</div><ul class="manage-list">';
+    card.manageList.forEach(function(m, i){
+      body += '<li><span class="num">('+String.fromCharCode(97+i)+')</span><span>'+m+'</span></li>';
+    });
+    body += '</ul></div>';
+  }
+
+  const cardId = "card"+idx;
+  const openAttr = card.open ? " open" : "";
+  const displayStyle = card.open ? "flex" : "none";
+
+  return '<div class="card" id="'+cardId+'"'+openAttr+'>'
+    +'<div class="card-head" onclick="toggle(\''+cardId+'\')">'
+    +'<div class="card-icon">'+iconSvg(card.icon)+'</div>'
+    +'<div class="card-title">'+card.title+'</div>'
+    +'<div class="card-chev">'+chevSvg()+'</div>'
+    +'</div>'
+    +'<div class="card-body" style="display:'+displayStyle+'">'+body+'</div>'
+    +'</div>';
+}
+
+function render(){
+  const d = DATA[currentLang] || DATA.id;
+  document.title = d.topbarTitle+" — VELTRIX";
+  $("topbarTitle").textContent = d.topbarTitle;
+
+  let html = '<div class="last-updated">'+d.lastUpdated+'</div>';
+  d.cards.forEach(function(card, i){ html += renderCard(card, i+1); });
+  html += '<div class="footer-card"><div class="footer-name">PT Sotta Teknologi Indonesia</div><div class="footer-sub">'+d.footerSub+'</div></div>';
+
+  $("root").innerHTML = html;
+
+  document.querySelectorAll(".lang-btn").forEach(function(b){
+    b.classList.toggle("active", b.dataset.lang===currentLang);
+  });
+}
+
+function toggle(id){
+  var card=document.getElementById(id);
+  var body=card.querySelector(".card-body");
+  var isOpen=card.hasAttribute("open");
+  if(isOpen){
+    card.removeAttribute("open");
+    body.style.display="none";
+  } else {
+    card.setAttribute("open","");
+    body.style.display="flex";
+  }
+}
+window.toggle=toggle;
+
+document.querySelectorAll(".lang-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    currentLang = btn.dataset.lang;
+    if(typeof window.setLang === "function") window.setLang(currentLang);
+    render();
+  });
+});
+
+document.addEventListener("langchange", function(e){
+  if(e && e.detail && e.detail.lang) currentLang = e.detail.lang;
+  render();
+});
+
+render();
+})();
+</script>
+</body>
+</html>
