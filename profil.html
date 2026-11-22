@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0A0A0B" />
+<title>Profil — VELTRIX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="lang.js"></script>
+<style>
+:root{
+  --bg:#0A0A0B;--surface:#141416;--surface-2:#1A1A1D;
+  --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.14);
+  --text:#F2F2F3;--text-2:#A0A0A8;--text-3:#6B6B74;
+  --gold:#E8B923;--danger:#F87171;--ok:#5EE3B0;
+  --sh:0 6px 20px rgba(232,185,35,.22);
+  --rm:10px;--rd:14px;--rl:20px;--rf:999px;
+  --nav-h:68px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+.app{max-width:430px;margin:0 auto;min-height:100dvh;
+  padding-bottom:calc(var(--nav-h) + 24px + env(safe-area-inset-bottom))}
+
+.topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:rgba(10,10,11,.88);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.back-btn{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;
+  border-radius:50%;background:var(--surface-2);border:1px solid var(--border)}
+.back-btn svg{width:17px;height:17px}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.01em}
+
+.wrap{padding:16px}
+.label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:8px;margin-top:22px}
+.label:first-child{margin-top:0}
+
+/* Kartu profil */
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  padding:18px;display:flex;flex-direction:column;gap:14px}
+.profile-head{display:flex;align-items:center;gap:12px}
+.avatar{width:50px;height:50px;border-radius:50%;flex:0 0 50px;
+  background:linear-gradient(135deg,var(--gold),#F0C43A);color:#0A0A0B;
+  display:grid;place-items:center;font-size:19px;font-weight:700}
+.profile-email{font-size:14px;font-weight:700;letter-spacing:-.01em;word-break:break-word}
+.profile-email-sub{font-size:11.5px;color:var(--text-3);margin-top:2px}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:4px;
+  border-top:1px solid var(--border)}
+.stat-grid{margin-top:4px;padding-top:14px}
+.stat-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--rd);
+  padding:12px}
+.stat-num{font-size:18px;font-weight:700;color:var(--gold);letter-spacing:-.02em}
+.stat-cap{font-size:11px;color:var(--text-3);margin-top:3px}
+
+/* List menu */
+.menu-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);
+  overflow:hidden}
+.menu-row{display:flex;align-items:center;gap:12px;padding:14px 16px;
+  transition:background .15s}
+.menu-row:not(:last-child){border-bottom:1px solid var(--border)}
+.menu-row:active{background:var(--surface-2)}
+.menu-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;
+  background:var(--surface-2);border:1px solid var(--border);
+  display:grid;place-items:center;color:var(--text-2)}
+.menu-icon svg{width:17px;height:17px}
+.menu-text{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+.menu-title{font-size:13.5px;font-weight:600}
+.menu-count{font-size:11px;color:var(--text-3)}
+.menu-chev{color:var(--text-3);flex:0 0 auto}
+.menu-chev svg{width:16px;height:16px}
+
+.badge-count{font-size:11px;font-weight:700;padding:2px 8px;border-radius:var(--rf);
+  background:rgba(232,185,35,.12);color:var(--gold);flex:0 0 auto}
+.badge-count.wait{background:rgba(248,113,113,.12);color:#F87171}
+.badge-count.ok{background:rgba(52,211,153,.12);color:var(--ok)}
+
+.btn-logout{width:100%;height:46px;border-radius:var(--rd);margin-top:22px;
+  font-size:13.5px;font-weight:700;color:#F87171;
+  background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);
+  transition:background .15s}
+.btn-logout:active{background:rgba(248,113,113,.15)}
+
+.app-ver{text-align:center;font-size:11px;color:var(--text-3);margin-top:18px}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:70;display:flex;justify-content:center;
+  background:rgba(15,15,17,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom)}
+.bottom-nav-inner{display:flex;align-items:stretch;width:100%;max-width:430px;height:var(--nav-h)}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  color:var(--text-3);font-size:10.5px;font-weight:600;transition:color .15s;
+  -webkit-tap-highlight-color:transparent}
+.nav-item svg{width:21px;height:21px}
+.nav-item.active{color:var(--gold)}
+.nav-item:active{opacity:.7}
+.nav-buy{flex:0 0 68px;position:relative}
+.nav-buy-btn{width:54px;height:54px;border-radius:50%;background:var(--gold);
+  display:grid;place-items:center;box-shadow:var(--sh);margin-top:-22px;transition:transform .12s}
+.nav-buy-btn svg{width:23px;height:23px;color:#0A0A0B}
+.nav-buy:active .nav-buy-btn{transform:scale(.95)}
+.nav-buy .nav-label-buy{color:var(--gold);font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a href="index.html" class="back-btn" id="backBtn" aria-label="Kembali">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="topbar-title" data-i18n="topbar.profil">Profil</div>
+  </header>
+
+  <div class="wrap" id="root">
+    <div style="padding:60px 0;text-align:center;color:var(--text-3);font-size:13px" data-i18n="profil.memuat">Memuat profil…</div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="index.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/>
+      </svg>
+      <span data-i18n="nav.home">Home</span>
+    </a>
+    <a href="isi-saldo.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="6" width="18" height="13" rx="3"/><path d="M16 12.5h2.5"/><path d="M3 10h18"/>
+      </svg>
+      <span data-i18n="nav.isisaldo">Isi Saldo</span>
+    </a>
+    <a href="beli.html" class="nav-item nav-buy">
+      <div class="nav-buy-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/>
+          <path d="M2.5 3.5h2.2l2.5 11h10.3l1.9-7.5H6.2"/>
+        </svg>
+      </div>
+      <span class="nav-label-buy" data-i18n="nav.beli">Beli</span>
+    </a>
+    <a href="transaksi.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9.5 8.5h5"/><path d="M9.5 12.5h5"/>
+      </svg>
+      <span data-i18n="nav.transaksi">Transaksi</span>
+    </a>
+    <a href="profil.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>
+      </svg>
+      <span data-i18n="nav.profil">Profil</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+(function(){
+"use strict";
+
+const SUPABASE_URL="https://rqqcdbbbcvhfjxznpowh.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_hTtIwFW3VFZj9p6qthAb3w_HbP5lVjs";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?"":s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* t() disediakan oleh lang.js */
+function tr(key){
+  return (typeof window.t==="function") ? window.t(key) : key;
+}
+
+function fmtTgl(iso){
+  if(!iso) return "-";
+  const d=new Date(iso);
+  if(isNaN(d.getTime())) return "-";
+  const code=(typeof window.getLang==="function")?window.getLang():"id";
+  const locale = code==="en" ? "en-US" : (code==="zh" ? "zh-CN" : "id-ID");
+  return d.toLocaleDateString(locale,{day:"2-digit",month:"short",year:"numeric"})
+    +" · "+d.toLocaleTimeString(locale,{hour:"2-digit",minute:"2-digit"});
+}
+
+function normalisasi(raw){
+  const s=String(raw==null?"":raw).toLowerCase().trim();
+  if(s==="belum_bayar"||s==="belum dibayarkan"||s==="pending") return "belum_bayar";
+  if(s==="diproses"||s==="proses") return "diproses";
+  if(s==="dikirim"||s==="sudah dikirim") return "dikirim";
+  if(s==="selesai") return "selesai";
+  if(s==="dibatalkan"||s==="batal") return "dibatalkan";
+  return "lainnya";
+}
+
+function iconSvg(name){
+  const icons={
+    clock:'<path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/>',
+    check:'<path d="M20 6 9 17l-5-5"/>',
+    cross:'<circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>',
+    user:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>',
+    gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/>',
+    shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+    help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.9.7c0 1.6-2.4 2-2.4 3.6"/><path d="M12 17h.01"/>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">'+(icons[name]||"")+'</svg>';
+}
+
+function chevSvg(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+}
+
+function row(opts){
+  return ''
+    +'<a class="menu-row" href="'+esc(opts.href)+'">'
+    +  '<div class="menu-icon">'+iconSvg(opts.icon)+'</div>'
+    +  '<div class="menu-text"><div class="menu-title">'+esc(opts.title)+'</div>'
+    +  (opts.sub?'<div class="menu-count">'+esc(opts.sub)+'</div>':'')
+    +  '</div>'
+    +  (opts.badge!=null?'<span class="badge-count '+(opts.badgeCls||"")+'">'+esc(opts.badge)+'</span>':'')
+    +  '<span class="menu-chev">'+chevSvg()+'</span>'
+    +'</a>';
+}
+
+/* ===== cache data supaya re-render saat ganti bahasa tidak query ulang ===== */
+let STATE={ loaded:false, user:null, list:[], error:null };
+
+async function loadData(){
+  STATE={ loaded:false, user:null, list:[], error:null };
+
+  let USER=null;
+  try{
+    const {data:sessionData}=await sb.auth.getSession();
+    USER = sessionData && sessionData.session ? sessionData.session.user : null;
+  }catch(e){
+    console.error("[auth]",e);
+  }
+  STATE.user=USER;
+
+  if(!USER){ STATE.loaded=true; return; }
+
+  const {data:trxData, error}=await sb.from("transactions")
+    .select("status")
+    .eq("user_id",USER.id);
+
+  STATE.error = error || null;
+  STATE.list = (!error && trxData) ? trxData : [];
+  STATE.loaded=true;
+}
+
+function renderProfile(){
+  const root=$("root");
+
+  if(!STATE.loaded){
+    root.innerHTML='<div style="padding:60px 0;text-align:center;color:var(--text-3);font-size:13px">'
+      +esc(tr("profil.memuat"))+'</div>';
+    return;
+  }
+
+  const USER=STATE.user;
+
+  if(!USER){
+    root.innerHTML='<div style="padding:60px 24px;text-align:center;color:var(--text-3);font-size:13px">'
+      +esc(tr("profil.perluMasuk"))+'<br>'
+      +'<a href="login.html" style="color:var(--gold);font-weight:600">'+esc(tr("home.masukBtn"))+'</a></div>';
+    return;
+  }
+
+  if(STATE.error){
+    root.innerHTML='<div style="padding:60px 24px;text-align:center;color:#F87171;font-size:13px">'
+      +esc(STATE.error.message||"Error")+'</div>';
+    return;
+  }
+
+  let belumBayar=0, selesai=0, dibatalkan=0;
+  STATE.list.forEach(function(tx){
+    const n = normalisasi(tx.status);
+    if(n==="belum_bayar"||n==="diproses") belumBayar++;
+    else if(n==="dikirim"||n==="selesai") selesai++;
+    else if(n==="dibatalkan") dibatalkan++;
+  });
+
+  const email = USER.email || "-";
+  const initial = email.charAt(0).toUpperCase() || "?";
+  const totalTrx = STATE.list.length;
+  const lastLogin = fmtTgl(USER.last_sign_in_at);
+
+  root.innerHTML = ''
+    +'<div class="profile-card">'
+    +  '<div class="profile-head">'
+    +    '<div class="avatar">'+esc(initial)+'</div>'
+    +    '<div>'
+    +      '<div class="profile-email">'+esc(email)+'</div>'
+    +      '<div class="profile-email-sub">'+esc(tr("profil.memberLabel"))+'</div>'
+    +    '</div>'
+    +  '</div>'
+    +  '<div class="stat-grid">'
+    +    '<div class="stat-box"><div class="stat-num">'+totalTrx+'</div><div class="stat-cap">'+esc(tr("profil.totalTrx"))+'</div></div>'
+    +    '<div class="stat-box"><div class="stat-num" style="font-size:12.5px">'+esc(lastLogin)+'</div><div class="stat-cap">'+esc(tr("acc.loginTerakhir"))+'</div></div>'
+    +  '</div>'
+    +'</div>'
+
+    +'<div class="label">'+esc(tr("profil.sectionPesanan"))+'</div>'
+    +'<div class="menu-list">'
+    +  row({href:"transaksi.html?filter=pending", icon:"clock", title:tr("result.belumBayar"), badge:belumBayar, badgeCls:"wait"})
+    +  row({href:"transaksi.html?filter=selesai", icon:"check", title:tr("profil.selesai"), badge:selesai, badgeCls:"ok"})
+    +  row({href:"transaksi.html?filter=dibatalkan", icon:"cross", title:tr("profil.dibatalkan"), badge:dibatalkan})
+    +'</div>'
+
+    +'<div class="label">'+esc(tr("profil.sectionAkun"))+'</div>'
+    +'<div class="menu-list">'
+    +  row({href:"profil-edit.html", icon:"user", title:tr("profil.profilSaya")})
+    +  row({href:"pengaturan.html", icon:"gear", title:tr("settings.title")})
+    +'</div>'
+
+    +'<div class="label">'+esc(tr("profil.sectionLainnya"))+'</div>'
+    +'<div class="menu-list">'
+    +  row({href:"tentang.html", icon:"info", title:tr("profil.tentangKami")})
+    +  row({href:"privasi.html", icon:"shield", title:tr("profil.kebijakanPrivasi")})
+    +  row({href:"bantuan.html", icon:"help", title:tr("topbar.bantuan")})
+    +'</div>'
+
+    +'<button type="button" class="btn-logout" id="btnLogout">'+esc(tr("profil.keluarAkun"))+'</button>'
+    +'<div class="app-ver">VELTRIX v1.0.0</div>';
+
+  $("btnLogout").addEventListener("click", async function(){
+    await sb.auth.signOut();
+    window.location.href="login.html";
+  });
+}
+
+function updateTitle(){
+  const code=(typeof window.getLang==="function")?window.getLang():"id";
+  const titles={id:"Profil — VELTRIX", zh:"个人中心 — VELTRIX", en:"Profile — VELTRIX"};
+  document.title = titles[code] || titles.id;
+
+  const backBtn=$("backBtn");
+  if(backBtn) backBtn.setAttribute("aria-label", tr("common.back"));
+}
+
+async function init(){
+  updateTitle();
+  await loadData();
+  renderProfile();
+}
+
+/* kalau bahasa diganti (lang.js dispatch di document) → cukup re-render, data tetap */
+document.addEventListener("langchange", function(){
+  updateTitle();
+  renderProfile();
+});
+
+init();
+
+})();
+</script>
+</body>
+</html>
